@@ -1,0 +1,30 @@
+spring:
+  profiles:
+    active: local
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/board?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: root
+    password: root00!@
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  thymeleaf:
+    prefix: file:src/main/resources/templates/
+    suffix: .html
+    cache: false
+
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
+
+  jpa:
+    hibernate:
+      ddl-auto: update # 또는 create, validate 등
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+logging:
+  level:
+    com.p6spy: debug
