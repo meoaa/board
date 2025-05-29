@@ -29,10 +29,7 @@ public class MemberServiceImpl implements MemberService{
     @Transactional
     @Override
     public void addMember(MemberSignUpRequestDto dto) {
-        if(memberRepository.existsByEmail(dto.getEmail()))
-            throw new ExistEmailException();
-        if(memberRepository.existsByUsername(dto.getUsername()))
-            throw new ExistUsernameException();
+        validateDuplicate(dto);
 
         Member member = Member.builder()
                 .username(dto.getUsername())
@@ -40,7 +37,6 @@ public class MemberServiceImpl implements MemberService{
                 .email(dto.getEmail())
                 .nickname(dto.getNickname())
                 .build();
-
         try{
             memberRepository.save(member);
         } catch(DataIntegrityViolationException e){
@@ -62,10 +58,18 @@ public class MemberServiceImpl implements MemberService{
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public void deleteMember(long id) {
         Member member = findMemberById(id);
         memberRepository.delete(member);
+    }
+
+    private void validateDuplicate(MemberSignUpRequestDto dto) {
+        if(memberRepository.existsByEmail(dto.getEmail()))
+            throw new ExistEmailException();
+        if(memberRepository.existsByUsername(dto.getUsername()))
+            throw new ExistUsernameException();
     }
 
     private Member findMemberById(long id) {
