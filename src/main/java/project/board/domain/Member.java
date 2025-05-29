@@ -12,6 +12,9 @@ import java.util.List;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Table(name = "member", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"email", "username"})
+})
 public class Member extends BaseEntity{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
