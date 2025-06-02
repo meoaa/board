@@ -5,6 +5,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import project.board.dto.member.MemberUpdateProfileRequestDto;
+import project.board.dto.member.PasswordChangeRequestDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,5 +42,14 @@ public class Member extends BaseEntity{
         this.nickname = nickname;
         this.username = username;
         this.role = ROLE.ROLE_USER;
+    }
+
+    /*변경 메서드*/
+    public void updateProfile(MemberUpdateProfileRequestDto dto){
+        this.nickname =  dto.getNickname();
+        this.email = dto.getEmail();
+    }
+    public void changePassword(PasswordChangeRequestDto dto){
+        this.password = dto.getNewPassword();
     }
 }

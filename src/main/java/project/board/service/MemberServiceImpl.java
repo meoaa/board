@@ -8,10 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 import project.board.domain.Member;
 import project.board.dto.member.MemberResponseDto;
 import project.board.dto.member.MemberSignUpRequestDto;
-import project.board.exception.DuplicateMemberException;
-import project.board.exception.ExistEmailException;
-import project.board.exception.ExistUsernameException;
-import project.board.exception.MemberNotFoundException;
+import project.board.dto.member.MemberUpdateProfileRequestDto;
+import project.board.dto.member.PasswordChangeRequestDto;
+import project.board.exception.*;
 
 import project.board.repository.MemberJpaRepository;
 import java.util.List;
@@ -42,6 +41,39 @@ public class MemberServiceImpl implements MemberService{
         } catch(DataIntegrityViolationException e){
             throw new DuplicateMemberException();
         }
+    }
+
+    //TODO: security 도입시 변경
+    @Transactional
+    @Override
+    public MemberResponseDto updateMember(
+            int id, MemberUpdateProfileRequestDto dto) {
+        Member member = findMemberById(id);
+
+        if(memberRepository.existsByEmail(dto.getEmail()))
+            throw new ExistEmailException();
+
+        member.updateProfile(dto);
+
+        return new MemberResponseDto(member);
+    }
+
+    //TODO : security 도입시 변경
+    @Transactional
+    @Override
+    public MemberResponseDto changePassword(
+            int id,
+            PasswordChangeRequestDto dto) {
+
+        Member member = findMemberById(id);
+        if(!member.getPassword().equals(dto.getOldPassword())){
+            throw new MissMatchOldPassword();
+        }
+        //TODO : dto의 password를 hash화 하는 로직
+
+
+        member.changePassword(dto);
+        return new MemberResponseDto(member);
     }
 
     @Override

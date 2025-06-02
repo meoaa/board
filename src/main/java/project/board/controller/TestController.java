@@ -22,4 +22,5 @@ public class TestController {
       memberService.addMember(dto);
       return "ok";
     }
+
 }

@@ -26,4 +26,22 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.of(410, ex.getMessage()));
     }
+
+    @ExceptionHandler(MemberNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFoundMemberById(MemberNotFoundException ex){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ErrorResponse.of(411, ex.getMessage()));
+    }
+
+    @ExceptionHandler(PasswordMismatchException.class)
+    public ResponseEntity<ErrorResponse> handlePasswordMisMatch(PasswordMismatchException ex){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.of(412, ex.getMessage()));
+    }
+
+    @ExceptionHandler(MissMatchOldPassword.class)
+    public ResponseEntity<ErrorResponse> handleOldPasswordMisMatch(MissMatchOldPassword ex){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.of(412, ex.getMessage()));
+    }
 }
