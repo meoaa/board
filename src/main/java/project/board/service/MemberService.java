@@ -1,14 +1,11 @@
 package project.board.service;
 
-import project.board.dto.member.MemberResponseDto;
-import project.board.dto.member.MemberSignUpRequestDto;
-import project.board.dto.member.MemberUpdateProfileRequestDto;
-import project.board.dto.member.PasswordChangeRequestDto;
+import project.board.dto.member.*;
 
 import java.util.List;
 
 public interface MemberService {
-    void addMember(MemberSignUpRequestDto dto);
+    SignUpResponseDto addMember(MemberSignUpRequestDto dto);
 
     MemberResponseDto updateMember(int id, MemberUpdateProfileRequestDto dto);
 

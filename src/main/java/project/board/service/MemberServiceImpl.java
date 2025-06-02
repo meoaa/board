@@ -6,10 +6,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.board.domain.Member;
-import project.board.dto.member.MemberResponseDto;
-import project.board.dto.member.MemberSignUpRequestDto;
-import project.board.dto.member.MemberUpdateProfileRequestDto;
-import project.board.dto.member.PasswordChangeRequestDto;
+import project.board.dto.member.*;
 import project.board.exception.*;
 
 import project.board.repository.MemberJpaRepository;
@@ -27,7 +24,7 @@ public class MemberServiceImpl implements MemberService{
 
     @Transactional
     @Override
-    public void addMember(MemberSignUpRequestDto dto) {
+    public SignUpResponseDto addMember(MemberSignUpRequestDto dto) {
         validateDuplicate(dto);
 
         Member member = Member.builder()
@@ -37,7 +34,8 @@ public class MemberServiceImpl implements MemberService{
                 .nickname(dto.getNickname())
                 .build();
         try{
-            memberRepository.save(member);
+            Member savedMember = memberRepository.save(member);
+            return new SignUpResponseDto(savedMember);
         } catch(DataIntegrityViolationException e){
             throw new DuplicateMemberException();
         }

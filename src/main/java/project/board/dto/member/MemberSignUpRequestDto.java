@@ -9,4 +9,11 @@ public class MemberSignUpRequestDto {
     private String password;
     private String email;
     private String nickname;
+
+    public MemberSignUpRequestDto(String username, String password, String email, String nickname) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.nickname = nickname;
+    }
 }
