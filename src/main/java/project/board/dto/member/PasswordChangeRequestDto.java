@@ -1,9 +1,10 @@
 package project.board.dto.member;
 
+import lombok.Data;
 import lombok.Getter;
 import project.board.exception.PasswordMismatchException;
 
-@Getter
+@Data
 public class PasswordChangeRequestDto {
 
     private String oldPassword;

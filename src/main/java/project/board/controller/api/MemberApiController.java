@@ -28,7 +28,7 @@ public class MemberApiController {
     //TODO: Security 도입 후 @AuthenticationPrincipal 변경예정
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<MemberResponseDto>> updateProfile(
-            @PathVariable int id,
+            @PathVariable long id,
             @RequestBody MemberUpdateProfileRequestDto requestDto
             ){
         log.info("{}", requestDto);
@@ -38,7 +38,7 @@ public class MemberApiController {
 
     @PatchMapping("/password/{id}")
     public ResponseEntity<ApiResponse<MemberResponseDto>> changePassword(
-            @PathVariable int id,
+            @PathVariable long id,
             @RequestBody PasswordChangeRequestDto dto){
 
         dto.validatePasswordMatch();

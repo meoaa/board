@@ -45,7 +45,7 @@ public class MemberServiceImpl implements MemberService{
     @Transactional
     @Override
     public MemberResponseDto updateMember(
-            int id, MemberUpdateProfileRequestDto dto) {
+            Long id, MemberUpdateProfileRequestDto dto) {
         Member member = findMemberById(id);
 
         if(memberRepository.existsByEmail(dto.getEmail()))
@@ -60,7 +60,7 @@ public class MemberServiceImpl implements MemberService{
     @Transactional
     @Override
     public MemberResponseDto changePassword(
-            int id,
+            Long id,
             PasswordChangeRequestDto dto) {
 
         Member member = findMemberById(id);
