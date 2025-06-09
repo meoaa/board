@@ -2,7 +2,7 @@ package project.board;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import project.board.domain.Member;
+import project.board.member.domain.Member;
 
 @SpringBootTest
 class BoardApplicationTests {

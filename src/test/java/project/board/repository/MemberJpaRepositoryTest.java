@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
-import project.board.domain.Member;
-import project.board.domain.ROLE;
+import project.board.member.domain.Member;
+import project.board.member.domain.ROLE;
 
 import java.util.List;
 import java.util.Optional;

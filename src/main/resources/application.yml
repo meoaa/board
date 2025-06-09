@@ -28,3 +28,6 @@ spring:
 logging:
   level:
     com.p6spy: debug
+
+jwt:
+  secret: ThisIsASecretKeyThatIsVerySasdfasdfasdfecureAndLongEnough

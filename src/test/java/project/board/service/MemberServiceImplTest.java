@@ -8,11 +8,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import org.springframework.transaction.annotation.Transactional;
-import project.board.domain.Member;
-import project.board.dto.member.*;
-import project.board.exception.ExistEmailException;
-import project.board.exception.ExistUsernameException;
-import project.board.exception.MissMatchOldPassword;
+import project.board.member.domain.Member;
+import project.board.auth.dto.SignUpRequestDto;
+import project.board.auth.dto.SignUpResponseDto;
+import project.board.common.exception.ExistEmailException;
+import project.board.common.exception.ExistUsernameException;
+import project.board.common.exception.MissMatchOldPassword;
+import project.board.member.dto.MemberResponseDto;
+import project.board.member.dto.MemberUpdateProfileRequestDto;
+import project.board.member.dto.PasswordChangeRequestDto;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,8 +33,8 @@ class MemberServiceImplTest {
 
     @Test
     public void 회원가입_성공(){
-        MemberSignUpRequestDto requestDto =
-                new MemberSignUpRequestDto(
+        SignUpRequestDto requestDto =
+                new SignUpRequestDto(
                         "test name",
                         "password",
                         "test mail",
@@ -43,10 +47,10 @@ class MemberServiceImplTest {
 
     @Test
     public void 회원가입_아이디_중복예외(){
-        MemberSignUpRequestDto dto1 =
-                new MemberSignUpRequestDto("user1", "pw1", "same@mail.com", "nick1");
-        MemberSignUpRequestDto sameUsernameDto =
-                new MemberSignUpRequestDto(
+        SignUpRequestDto dto1 =
+                new SignUpRequestDto("user1", "pw1", "same@mail.com", "nick1");
+        SignUpRequestDto sameUsernameDto =
+                new SignUpRequestDto(
                         "user1",
                         "pw1",
                         "same@mail.com1",
@@ -61,16 +65,16 @@ class MemberServiceImplTest {
 
     @Test
     public void 회원가입_이메일_중복예외(){
-        MemberSignUpRequestDto dto1 =
-                new MemberSignUpRequestDto("user1",
+        SignUpRequestDto dto1 =
+                new SignUpRequestDto("user1",
                         "pw1",
                         "same@mail.com",
                         "nick1");
 
         memberService.addMember(dto1);
 
-        MemberSignUpRequestDto sameEmailDto =
-                new MemberSignUpRequestDto(
+        SignUpRequestDto sameEmailDto =
+                new SignUpRequestDto(
                         "user2",
                         "pw1",
                         "same@mail.com",
@@ -84,7 +88,7 @@ class MemberServiceImplTest {
     @Test
     @Transactional
     public void 회원정보_업데이트(){
-        MemberSignUpRequestDto signupDto = new MemberSignUpRequestDto(
+        SignUpRequestDto signupDto = new SignUpRequestDto(
                 "user1",
                 "pw1",
                 "email@email.com",
@@ -107,13 +111,13 @@ class MemberServiceImplTest {
     @Test
     @Transactional
     public void 회원정보_업데이트시_존재하는_이메일_예외(){
-        MemberSignUpRequestDto signupDto1 = new MemberSignUpRequestDto(
+        SignUpRequestDto signupDto1 = new SignUpRequestDto(
                 "user1",
                 "pw1",
                 "email@email.com",
                 "nick"
         );
-        MemberSignUpRequestDto signupDto2 = new MemberSignUpRequestDto(
+        SignUpRequestDto signupDto2 = new SignUpRequestDto(
                 "user2",
                 "pw1",
                 "email@email.com2",
@@ -137,7 +141,7 @@ class MemberServiceImplTest {
     @Transactional
     //TODO:Security 도입시 나중에 passwordEncoder match로변경
     public void 비밀번호_변경_테스트(){
-        MemberSignUpRequestDto requestDto = new MemberSignUpRequestDto(
+        SignUpRequestDto requestDto = new SignUpRequestDto(
                 "user",
                 "pw1",
                 "email@email.com",
@@ -163,7 +167,7 @@ class MemberServiceImplTest {
     @Test
     @Transactional
     public void 비밀번호_변경시_기존의_비밀번호_불일치_예외발생(){
-        MemberSignUpRequestDto requestDto = new MemberSignUpRequestDto(
+        SignUpRequestDto requestDto = new SignUpRequestDto(
                 "user",
                 "pw1",
                 "email@email.com",
