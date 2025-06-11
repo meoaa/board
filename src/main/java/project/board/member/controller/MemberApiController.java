@@ -18,7 +18,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/profile")
+@RequestMapping("/api/members")
 public class MemberApiController {
 
     private final MemberService memberService;
