@@ -69,9 +69,10 @@ public class MemberServiceImpl implements MemberService{
 
         Member member = findMemberById(id);
 
-        if(!member.getPassword().equals(dto.getOldPassword())){
+        if(!passwordEncoder.matches(dto.getOldPassword(), member.getPassword())){
             throw new MissMatchOldPassword();
         }
+
         //TODO : dto의 password를 hash화 하는 로직
         dto.setNewPassword(passwordEncoder.encode(dto.getNewPassword()));
 

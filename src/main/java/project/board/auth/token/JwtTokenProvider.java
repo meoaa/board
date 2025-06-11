@@ -47,22 +47,21 @@ public class JwtTokenProvider {
 
     //JWT 토큰에서 사용자 이름 추출
     public String getUsernameFromToken(String token){
-        return Jwts.parserBuilder()
+        String subject = Jwts.parserBuilder()
                 .setSigningKey(secretKey)
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
+
+        log.info("get username from token{}", subject);
+        return subject;
     }
 
     // 토큰 유효성 검증
     public boolean validateToken(String token) {
-        try {
-            Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
-            return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            log.warn("JWT 유효성 검사 실패: {}", e.getMessage());
-            return false;
-        }
+        Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
+        return true;
+
     }
 }

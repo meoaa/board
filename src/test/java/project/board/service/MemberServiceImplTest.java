@@ -17,6 +17,7 @@ import project.board.common.exception.MissMatchOldPassword;
 import project.board.member.dto.MemberResponseDto;
 import project.board.member.dto.MemberUpdateProfileRequestDto;
 import project.board.member.dto.PasswordChangeRequestDto;
+import project.board.member.service.MemberService;
 
 import static org.junit.jupiter.api.Assertions.*;
 
