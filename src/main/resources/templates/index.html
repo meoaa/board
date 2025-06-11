@@ -1,1 +1,88 @@
 <h1>hello</h1>
+
+<nav>
+    <div id="login_box">
+        <span>아이디</span><input type="text" name="username">
+        <span>비밀번호</span><input type="password" name="password">
+        <button id="login_btn">로그인</button>
+        <button>회원가입</button>
+        <div class="error_box" style="color: red;
+        font-size: 0.9rem;
+        margin-top: 10px;
+        display: block;">
+        </div>
+    </div>
+    <div id="user_dashboard">
+        <span id="username">님 환영합니다.</span>
+        <button id="logout">로그아웃</button>
+        <button id="edit_profile">정보수정</button>
+    </div>
+</nav>
+
+<script>
+    const loginBtn = document.querySelector("#login_btn");
+    const jwtToken = localStorage.getItem("jwtToken");
+
+    if(jwtToken){
+        (async () => {
+            const loginBox = document.querySelector("#login_box");
+            loginBox.style.display = "none";
+            const payload = await fetchData("/api/members/me","GET",null,{"Authorization":`Bearer ${jwtToken}`});
+            const usernameSpan = document.querySelector("#username");
+            usernameSpan.innerText = `${payload.data.nickname}님 환영합니다.`
+
+            const logoutBtn = document.querySelector("#logout");
+            logoutBtn.addEventListener("click",()=>{
+                localStorage.removeItem("jwtToken");
+                window.location.href = "/";
+            })
+        })();
+    }else{
+        const userDashboard = document.querySelector("#user_dashboard");
+        userDashboard.style.display = "none";
+    }
+
+
+    loginBtn.addEventListener("click",async ()=>{
+        const username = document.querySelector("input[name='username']").value;
+        const password = document.querySelector("input[name='password']").value;
+        const data = { username, password };
+
+        try{
+            const payload = await fetchData(
+            "/api/auth/login",
+            "POST",
+            data)
+            localStorage.setItem("jwtToken",payload.data.token);
+            window.location.href = "/";
+        }catch(result){
+            const errorBox = document.querySelector(".error_box");
+            errorBox.innerHTML = "";
+            const spanTag = document.createElement("span");
+            spanTag.innerText = result.message;
+            errorBox.appendChild(spanTag);
+        }
+    })
+
+    async function fetchData(url, method = 'GET', data = null ,headers ={}){
+        const options = {
+            method,
+            headers:{
+                'Content-Type': 'application/json',
+                ...headers
+            }
+        }
+        if(method === "POST" || method ==="PUT"|| method ==="PATCH"){
+            options.body = JSON.stringify(data);
+        }
+
+        console.log(options)
+        const response = await fetch(url,options);
+        const result = await response.json();
+
+        if(!response.ok){
+            throw result;
+        }
+        return result;
+    }
+</script>

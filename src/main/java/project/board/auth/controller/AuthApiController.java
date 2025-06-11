@@ -38,8 +38,8 @@ public class AuthApiController {
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<AuthResponseDto>> login(@RequestBody LoginRequestDto dto){
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword());
 
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword());
         Authentication authenticate = authenticationManager.authenticate(authToken);
 
         String token = jwtTokenProvider.generateToken(authenticate);

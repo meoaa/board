@@ -34,7 +34,6 @@ public class MemberApiController {
         return ResponseEntity.ok(ApiResponse.of(200,"요청완료", memberResponseDto));
     }
 
-    //TODO: Security 도입 후 @AuthenticationPrincipal 변경예정
     @PutMapping("/update")
     public ResponseEntity<ApiResponse<MemberResponseDto>> updateProfile(
             @RequestBody MemberUpdateProfileRequestDto requestDto,
