@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import project.board.common.domain.BaseEntity;
 import project.board.comment.domain.Comment;
 import project.board.member.domain.Member;
+import project.board.post.dto.PostUpdateRequestDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,8 @@ public class Post extends BaseEntity {
     @Lob
     private String content;
 
+    private int hit;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
@@ -36,6 +39,7 @@ public class Post extends BaseEntity {
     private Post(String title, String content, Member member) {
         this.title = title;
         this.content = content;
+        this.hit = 0;
         if(member != null){
             addMember(member);
         }
@@ -45,5 +49,11 @@ public class Post extends BaseEntity {
     private void addMember(Member member){
         this.member = member;
         member.getPosts().add(this);
+    }
+
+    /* 변경 메서드 */
+    public void updatePost(PostUpdateRequestDto dto){
+        this.title = dto.getTitle();
+        this.content = dto.getContent();
     }
 }

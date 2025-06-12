@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 import project.board.member.domain.Member;
 import project.board.member.domain.ROLE;
+import project.board.member.repository.MemberJpaRepository;
 
 import java.util.List;
 import java.util.Optional;

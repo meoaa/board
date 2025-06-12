@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 import project.board.member.domain.Member;
+import project.board.member.repository.MemberJpaRepository;
 import project.board.post.domain.Post;
 import project.board.post.repository.PostJpaRepository;
 

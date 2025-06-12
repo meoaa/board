@@ -10,6 +10,7 @@ import org.springframework.test.context.ActiveProfiles;
 import project.board.comment.repository.CommentJpaRepository;
 import project.board.comment.domain.Comment;
 import project.board.member.domain.Member;
+import project.board.member.repository.MemberJpaRepository;
 import project.board.post.domain.Post;
 import project.board.post.repository.PostJpaRepository;
 
