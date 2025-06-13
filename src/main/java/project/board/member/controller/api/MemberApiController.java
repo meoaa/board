@@ -1,4 +1,4 @@
-package project.board.member.controller;
+package project.board.member.controller.api;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,12 +12,10 @@ import project.board.member.dto.MemberUpdateProfileRequestDto;
 import project.board.member.dto.PasswordChangeRequestDto;
 import project.board.member.service.MemberService;
 
-import java.util.Map;
-
 @Slf4j
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/members")
+@RequestMapping("/api/member")
 public class MemberApiController {
 
     private final MemberService memberService;
