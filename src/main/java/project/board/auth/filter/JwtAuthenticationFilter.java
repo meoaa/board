@@ -60,8 +60,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                   SecurityContextHolder.getContext()
                           .setAuthentication(authentication);
               }
-          }catch(JwtException | IllegalArgumentException ex){
-              log.warn("JWT validation failed: {}", ex.getMessage());
+          } catch (SignatureException ex){
+            request.setAttribute("JwtExceptionMessage", "JWT 서명이 유효하지 않습니다.");
           }
 
         filterChain.doFilter(request,response);

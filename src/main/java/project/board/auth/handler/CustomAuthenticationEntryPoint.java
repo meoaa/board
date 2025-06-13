@@ -1,7 +1,7 @@
 package project.board.auth.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.security.SignatureException;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import project.board.common.ErrorResponse;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @Slf4j
 @Component
@@ -31,18 +32,16 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         log.info("CustomAuthenticationEntryPoint");
         log.warn("Authentication failed: {}", authException.getMessage());
         log.warn("Authentication failed: {}", authException.getClass().getSimpleName());
+        log.warn("Authentication failed: {}", req.getAttribute("JwtExceptionMessage"));
 
         res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         res.setContentType(MediaType.APPLICATION_JSON_VALUE);
         res.setCharacterEncoding("UTF-8");
 
+        String jwtExceptionMessage = (String) req.getAttribute("JwtExceptionMessage");
         String message;
 
-        if (authException.getCause() instanceof SignatureException) {
-            message = "유효하지 않은 토큰입니다. 서명이 일치하지 않습니다.";
-        } else {
-            message = "로그인이 필요하거나, 인증에 실패하였습니다.";
-        }
+        message = Objects.requireNonNullElse(jwtExceptionMessage, "로그인이 필요하거나, 인증에 실패하였습니다.");
 
         ErrorResponse errorResponse = ErrorResponse.of(403, message);
 
