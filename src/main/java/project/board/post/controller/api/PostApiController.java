@@ -31,6 +31,8 @@ public class PostApiController {
             BindingResult bindingResult,
             @AuthenticationPrincipal CustomUserDetails user){
 
+        log.info("createPost controller");
+
         if (bindingResult.hasErrors()) {
             // 에러 처리
             return ResponseEntity.badRequest().body(bindingResult.getAllErrors());

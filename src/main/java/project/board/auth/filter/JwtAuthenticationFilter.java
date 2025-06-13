@@ -1,5 +1,6 @@
 package project.board.auth.filter;
 
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -38,39 +39,32 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain)
             throws ServletException, IOException {
-        log.warn("🔥🔥 JwtAuthenticationFilter 호출됨 - URI: {}", request.getRequestURI());
 
             String token = resolveToken(request);
+            log.info("token : {}" , token);
 
-        try{
-            if(token != null && jwtTokenProvider.validateToken(token)){
-            String username = jwtTokenProvider.getUsernameFromToken(token);
-            var userDetails = userDetailsService.loadUserByUsername(username);
+          try{
+              if (token != null && jwtTokenProvider.validateToken(token)) {
+                  String username = jwtTokenProvider.getUsernameFromToken(token);
+                  var userDetails = userDetailsService.loadUserByUsername(username);
 
-            var authentication =
-                    new UsernamePasswordAuthenticationToken(
-                            userDetails,
-                            null,
-                            userDetails.getAuthorities()
-                    );
-            authentication.setDetails(
-                    new WebAuthenticationDetailsSource()
-                            .buildDetails(request));
-            SecurityContextHolder.getContext()
-                    .setAuthentication(authentication);
-            }
-
-
-        } catch (Exception ex) {
-            if (ex instanceof SignatureException || ex instanceof IllegalArgumentException) {
-                log.warn("🔥 JWT SignatureException 발생 → Spring Security가 감지할 수 있도록 래핑");
-                throw new BadCredentialsException("유효하지 않은 토큰", ex);
-            }
-            throw ex;
-        }
+                  var authentication =
+                          new UsernamePasswordAuthenticationToken(
+                                  userDetails,
+                                  null,
+                                  userDetails.getAuthorities()
+                          );
+                  authentication.setDetails(
+                          new WebAuthenticationDetailsSource()
+                                  .buildDetails(request));
+                  SecurityContextHolder.getContext()
+                          .setAuthentication(authentication);
+              }
+          }catch(JwtException | IllegalArgumentException ex){
+              log.warn("JWT validation failed: {}", ex.getMessage());
+          }
 
         filterChain.doFilter(request,response);
-
     }
 
     private String resolveToken(HttpServletRequest request){

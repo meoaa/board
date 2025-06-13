@@ -29,7 +29,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
             throws IOException, ServletException {
 
         log.info("CustomAuthenticationEntryPoint");
-
         log.warn("Authentication failed: {}", authException.getMessage());
         log.warn("Authentication failed: {}", authException.getClass().getSimpleName());
 
@@ -39,11 +38,12 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
         String message;
 
-        if(authException.getCause() instanceof SignatureException){
+        if (authException.getCause() instanceof SignatureException) {
             message = "유효하지 않은 토큰입니다. 서명이 일치하지 않습니다.";
-        }else{
+        } else {
             message = "로그인이 필요하거나, 인증에 실패하였습니다.";
         }
+
         ErrorResponse errorResponse = ErrorResponse.of(403, message);
 
         res.getWriter().write(objectMapper.writeValueAsString(errorResponse));
