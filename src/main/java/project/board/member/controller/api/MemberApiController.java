@@ -15,7 +15,7 @@ import project.board.member.service.MemberService;
 @Slf4j
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/member")
+@RequestMapping("/api/members")
 public class MemberApiController {
 
     private final MemberService memberService;

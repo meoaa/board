@@ -1,5 +1,6 @@
 package project.board.config;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import project.board.auth.filter.JwtAuthenticationFilter;
 import project.board.auth.token.JwtTokenProvider;
@@ -30,6 +32,7 @@ public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserDetailsService userDetailsService;
     private final AuthenticationEntryPoint authenticationEntryPoint;
+    private final AccessDeniedHandler accessDeniedHandler;
 
     @Bean
     @Order(1)
@@ -38,7 +41,8 @@ public class SecurityConfig {
                 .securityMatcher("/api/auth/**", "/swagger/**", "/health")
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().permitAll())
-                .exceptionHandling(e -> e.authenticationEntryPoint(authenticationEntryPoint))
+                .exceptionHandling(e ->
+                        e.authenticationEntryPoint(authenticationEntryPoint))
                 .addFilterBefore(
                         new JwtAuthenticationFilter(jwtTokenProvider, userDetailsService),
                         UsernamePasswordAuthenticationFilter.class
@@ -53,13 +57,18 @@ public class SecurityConfig {
         http = applyCommonConfig(http)
                 .securityMatcher("/api/**")
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/members/**").authenticated()
-                        .anyRequest().permitAll())
+                        .requestMatchers("/api/members/**","/api/posts/**").authenticated()
+                        .anyRequest().permitAll()
+                )
+                .exceptionHandling(e->
+                        e
+                                .authenticationEntryPoint(authenticationEntryPoint)
+                                .accessDeniedHandler(accessDeniedHandler)
+                )
                 .addFilterBefore(
                         new JwtAuthenticationFilter(jwtTokenProvider, userDetailsService),
                         UsernamePasswordAuthenticationFilter.class
                 );
-
         return http.build();
     }
 

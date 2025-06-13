@@ -1,6 +1,6 @@
 package project.board.auth.filter;
 
-import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,10 +9,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
+
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.access.ExceptionTranslationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -35,7 +38,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain)
             throws ServletException, IOException {
-        String token = resolveToken(request);
+        log.warn("🔥🔥 JwtAuthenticationFilter 호출됨 - URI: {}", request.getRequestURI());
+
+            String token = resolveToken(request);
 
         try{
             if(token != null && jwtTokenProvider.validateToken(token)){
@@ -54,12 +59,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext()
                     .setAuthentication(authentication);
             }
-            filterChain.doFilter(request,response);
-        }catch(JwtException e){
-            log.warn("{}", e.getMessage());
-            setErrorResponse(response, HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다.");
-            return;
+
+
+        } catch (Exception ex) {
+            if (ex instanceof SignatureException || ex instanceof IllegalArgumentException) {
+                log.warn("🔥 JWT SignatureException 발생 → Spring Security가 감지할 수 있도록 래핑");
+                throw new BadCredentialsException("유효하지 않은 토큰", ex);
+            }
+            throw ex;
         }
+
+        filterChain.doFilter(request,response);
+
     }
 
     private String resolveToken(HttpServletRequest request){
@@ -70,11 +81,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return null;
     }
 
-    private void setErrorResponse(HttpServletResponse response, HttpStatus status, String message) throws IOException {
-        response.setStatus(status.value());
-        response.setContentType("application/json; charset=UTF-8");
-
-        String json = String.format("{\"code\": %d, \"message\": \"%s\",\"success\":\"false\"}", status.value(), message);
-        response.getWriter().write(json);
-    }
+//    private void setErrorResponse(HttpServletResponse response, HttpStatus status, String message) throws IOException {
+//        response.setStatus(status.value());
+//        response.setContentType("application/json; charset=UTF-8");
+//
+//        String json = String.format("{\"code\": %d, \"message\": \"%s\",\"success\":\"false\"}", status.value(), message);
+//        response.getWriter().write(json);
+//    }
 }

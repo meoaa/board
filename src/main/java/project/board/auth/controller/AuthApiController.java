@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,11 +39,13 @@ public class AuthApiController {
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<AuthResponseDto>> login(@RequestBody LoginRequestDto dto){
+        log.info("login 컨트롤러 도달");
 
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword());
-        Authentication authenticate = authenticationManager.authenticate(authToken);
 
+        Authentication authenticate = authenticationManager.authenticate(authToken);
         String token = jwtTokenProvider.generateToken(authenticate);
+
         return ResponseEntity.ok(ApiResponse.of(500,"로그인성공",new AuthResponseDto(token)));
     }
 }

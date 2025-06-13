@@ -2,6 +2,8 @@ package project.board.common.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import project.board.common.ErrorResponse;
@@ -49,5 +51,17 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleNotFoundPost(PostNotFoundException ex){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.of(400,ex.getMessage()));
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorResponse> handleAuthenticationException(AuthenticationException ex){
+        String message;
+        if (ex instanceof BadCredentialsException){
+            message = "아이디 또는 비밀번호가 올바르지 않습니다.";
+        } else {
+            message = "인증 실패: " + ex.getMessage();
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(ErrorResponse.of(403, message));
     }
 }

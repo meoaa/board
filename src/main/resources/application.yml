@@ -27,7 +27,16 @@ spring:
         format_sql: true
 logging:
   level:
+    org:
+      springframework:
+        security: DEBUG
+        web:
+          access: TRACE
+      apache:
+        catalina: DEBUG
+    org.springframework.security.web.FilterChainProxy: DEBUG
     com.p6spy: debug
+
 
 jwt:
   secret: ThisIsASecretKeyThatIsVerySasdfasdfasdfecureAndLongEnough
