@@ -31,14 +31,16 @@ public class AuthApiController {
     private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/createMember")
-    public ResponseEntity<ApiResponse<SignUpResponseDto>> createMember(@RequestBody SignUpRequestDto dto){
+    public ResponseEntity<ApiResponse<SignUpResponseDto>> createMember(
+            @RequestBody SignUpRequestDto dto){
         log.info("{}", dto);
         SignUpResponseDto responseDto = memberService.addMember(dto);
         return ResponseEntity.ok(ApiResponse.of(200,"회원가입 완료", responseDto));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<AuthResponseDto>> login(@RequestBody LoginRequestDto dto){
+    public ResponseEntity<ApiResponse<AuthResponseDto>> login(
+            @RequestBody LoginRequestDto dto){
         log.info("login 컨트롤러 도달");
 
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword());

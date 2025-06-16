@@ -32,13 +32,13 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         log.info("CustomAuthenticationEntryPoint");
         log.warn("Authentication failed: {}", authException.getMessage());
         log.warn("Authentication failed: {}", authException.getClass().getSimpleName());
-        log.warn("Authentication failed: {}", req.getAttribute("JwtExceptionMessage"));
+        log.warn("Authentication failed: {}", req.getAttribute("jwtException"));
 
         res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         res.setContentType(MediaType.APPLICATION_JSON_VALUE);
         res.setCharacterEncoding("UTF-8");
 
-        String jwtExceptionMessage = (String) req.getAttribute("JwtExceptionMessage");
+        String jwtExceptionMessage = (String) req.getAttribute("jwtException");
         String message;
 
         message = Objects.requireNonNullElse(jwtExceptionMessage, "로그인이 필요하거나, 인증에 실패하였습니다.");

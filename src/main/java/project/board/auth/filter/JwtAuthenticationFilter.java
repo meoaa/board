@@ -15,6 +15,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.access.ExceptionTranslationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -40,31 +41,37 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain)
             throws ServletException, IOException {
 
-            String token = resolveToken(request);
-            log.info("token : {}" , token);
+        String token = resolveToken(request);
+        log.info("token : {}" , token);
 
-          try{
-              if (token != null && jwtTokenProvider.validateToken(token)) {
-                  String username = jwtTokenProvider.getUsernameFromToken(token);
-                  var userDetails = userDetailsService.loadUserByUsername(username);
+        try{
+            if (token != null && jwtTokenProvider.validateToken(token)) {
+                var userDetails = createUserDetails(token);
 
-                  var authentication =
-                          new UsernamePasswordAuthenticationToken(
-                                  userDetails,
-                                  null,
-                                  userDetails.getAuthorities()
-                          );
-                  authentication.setDetails(
-                          new WebAuthenticationDetailsSource()
-                                  .buildDetails(request));
-                  SecurityContextHolder.getContext()
-                          .setAuthentication(authentication);
-              }
-          } catch (SignatureException ex){
-            request.setAttribute("JwtExceptionMessage", "JWT 서명이 유효하지 않습니다.");
-          }
+                var authentication =
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails,
+                                null,
+                                userDetails.getAuthorities()
+                        );
+                authentication.setDetails(
+                        new WebAuthenticationDetailsSource()
+                                .buildDetails(request));
+
+                SecurityContextHolder.getContext()
+                        .setAuthentication(authentication);
+            }
+        } catch (SignatureException ex){
+            request.setAttribute("jwtException", ex.getMessage());
+        }
 
         filterChain.doFilter(request,response);
+    }
+
+    private UserDetails createUserDetails(String token) {
+        String username = jwtTokenProvider.getUsernameFromToken(token);
+        var userDetails = userDetailsService.loadUserByUsername(username);
+        return userDetails;
     }
 
     private String resolveToken(HttpServletRequest request){

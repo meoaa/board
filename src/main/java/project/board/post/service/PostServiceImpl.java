@@ -14,7 +14,8 @@ import project.board.post.dto.PostCreateRequestDto;
 import project.board.post.dto.PostListResponseDto;
 import project.board.post.dto.PostResponseDto;
 import project.board.post.dto.PostUpdateRequestDto;
-import project.board.post.repository.PostJpaRepository;
+
+import project.board.post.repository.PostRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService{
 
-    private final PostJpaRepository postRepository;
+    private final PostRepository postRepository;
     private final MemberJpaRepository memberRepository;
 
     @Override
@@ -56,8 +57,9 @@ public class PostServiceImpl implements PostService{
 
     @Override
     public List<PostListResponseDto> findAllPost() {
-        return postRepository.findAll().stream().
-                map(PostListResponseDto::from)
+        return postRepository.findAllPosts()
+                .stream()
+                .map(PostListResponseDto::from)
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
