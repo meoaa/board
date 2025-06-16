@@ -26,6 +26,6 @@ public class PostViewController {
                 postService.findAllPost();
         model.addAttribute("posts", posts);
 
-        return "/posts/post_list";
+        return "/posts/list";
     }
 }

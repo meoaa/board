@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>기본 제목</title>
+</head>
+<body>
+<div th:fragment="header">
+    <header>
+        <h1>Board Project</h1>
+        <nav>
+            <div id="login_box">
+                <span>아이디</span><input type="text" name="username">
+                <span>비밀번호</span><input type="password" name="password">
+                <button id="login_btn">로그인</button>
+                <button>회원가입</button>
+                <div class="error_box" style="color: red;
+        font-size: 0.9rem;
+        margin-top: 10px;
+        display: block;">
+                </div>
+            </div>
+            <div id="user_dashboard">
+                <span id="username">님 환영합니다.</span>
+                <button id="logout">로그아웃</button>
+                <button id="edit_profile">정보수정</button>
+            </div>
+        </nav>
+    </header>
+</div>
+</body>
+</html>
