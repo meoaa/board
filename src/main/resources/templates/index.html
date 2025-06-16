@@ -6,6 +6,7 @@
 <body>
 <div th:replace="fragments/header :: header"></div>
 <h1>게시판</h1>
+<div>
 <table>
     <thead>
     <tr>
@@ -25,7 +26,8 @@
         <td th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}">2025-06-16</td></tr>
     </tbody>
 </table>
-
+    <a href="/posts/create">게시글 작성</a>
+</div>
 <script type="module" th:src="@{/js/layout/header.js}"></script>
 <script type="module" th:src="@{/js/auth/login.js}"></script>
 </body>

@@ -71,6 +71,26 @@ public class SecurityConfig {
         return http.build();
     }
 
+    @Bean
+    @Order(3)
+    public SecurityFilterChain viewSecurityFilterChain(HttpSecurity http) throws Exception {
+        http = applyCommonConfig(http)
+                .securityMatcher("/posts/**", "/members/**") // 뷰 전용 요청만 필터링
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/posts/create").authenticated()
+                        .anyRequest().permitAll()
+                )
+                .exceptionHandling(e -> e
+                        .accessDeniedHandler(accessDeniedHandler)
+                        .authenticationEntryPoint(authenticationEntryPoint)
+                )
+                .addFilterBefore(
+                        new JwtAuthenticationFilter(jwtTokenProvider, userDetailsService),
+                        UsernamePasswordAuthenticationFilter.class
+                );
+        return http.build();
+    }
+
     private static HttpSecurity applyCommonConfig(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)

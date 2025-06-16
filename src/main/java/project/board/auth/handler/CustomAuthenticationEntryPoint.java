@@ -28,6 +28,13 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
                          HttpServletResponse res,
                          AuthenticationException authException)
             throws IOException, ServletException {
+        String requestURI = req.getRequestURI();
+
+
+        if(requestURI.equals("/posts/create")){
+            res.sendRedirect("/login?error=unauthorized");
+            return;
+        }
 
         log.info("CustomAuthenticationEntryPoint");
         log.warn("Authentication failed: {}", authException.getMessage());

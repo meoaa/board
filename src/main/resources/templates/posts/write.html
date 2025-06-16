@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Hello Page</title>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+<h1>게시판</h1>
+<table>
+    <span><input></span>
+</table>
+
+<script type="module" th:src="@{/js/layout/header.js}"></script>
+<script type="module" th:src="@{/js/auth/login.js}"></script>
+</body>
+</html>

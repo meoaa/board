@@ -28,4 +28,10 @@ public class PostViewController {
 
         return "/posts/list";
     }
+
+    @GetMapping("/create")
+    public String createPostPage(){
+
+        return "/posts/write";
+    }
 }
