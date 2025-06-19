@@ -4,6 +4,7 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -45,7 +46,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         log.info("token : {}" , token);
 
         try{
-            if (token != null && jwtTokenProvider.validateToken(token)) {
+            if (token != null && jwtTokenProvider.validateToken(token, false)) {
                 var userDetails = createUserDetails(token);
 
                 var authentication =
@@ -69,15 +70,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private UserDetails createUserDetails(String token) {
-        String username = jwtTokenProvider.getUsernameFromToken(token);
+        String username = jwtTokenProvider.getUsernameFromToken(token, false);
         var userDetails = userDetailsService.loadUserByUsername(username);
         return userDetails;
     }
 
     private String resolveToken(HttpServletRequest request){
-        String bearer = request.getHeader("Authorization");
-        if(StringUtils.hasText(bearer) && bearer.startsWith("Bearer ")){
-            return bearer.substring(7);
+        if (request.getCookies() != null){
+            for(Cookie cookie : request.getCookies()){
+                if("jwtToken".equals(cookie.getName())){
+                    return cookie.getValue();
+                }
+            }
         }
         return null;
     }
