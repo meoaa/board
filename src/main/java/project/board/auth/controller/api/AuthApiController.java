@@ -11,15 +11,16 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import project.board.auth.CustomUserDetails;
-import project.board.auth.dto.AuthResponseDto;
+
 import project.board.auth.dto.LoginRequestDto;
+import project.board.auth.service.RefreshTokenService;
 import project.board.auth.token.JwtTokenProvider;
 import project.board.common.ApiResponse;
 import project.board.auth.dto.SignUpRequestDto;
 import project.board.auth.dto.SignUpResponseDto;
 import project.board.member.service.MemberService;
 
-import java.time.Duration;
+
 import java.util.Map;
 
 @Slf4j
@@ -32,6 +33,7 @@ public class AuthApiController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RefreshTokenService refreshTokenService;
 
     @PostMapping("/createMember")
     public ResponseEntity<ApiResponse<SignUpResponseDto>> createMember(
@@ -56,6 +58,7 @@ public class AuthApiController {
         String accessToken = jwtTokenProvider.generateAccessToken(authenticate);
         String refreshToken = jwtTokenProvider.generateRefreshToken(authenticate);
 
+        refreshTokenService.saveOrUpdate(authenticate.getName(), refreshToken);
         log.info("name : {}" , authenticate.getName());
 
         ResponseCookie accessCookie = ResponseCookie.from("accessToken", accessToken)
@@ -82,11 +85,31 @@ public class AuthApiController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpServletResponse response) {
-        ResponseCookie deleteAccess = ResponseCookie.from("accessToken", "").maxAge(0).path("/").build();
-        ResponseCookie deleteRefresh = ResponseCookie.from("refreshToken", "").maxAge(0).path("/auth/refresh").build();
-        response.addHeader("Set-Cookie", deleteAccess.toString());
-        response.addHeader("Set-Cookie", deleteRefresh.toString());
+    public ResponseEntity<?> logout(
+            @CookieValue(name = "refreshToken", required = false) String refreshToken,
+            HttpServletResponse response) {
+
+        if (refreshToken != null) {
+            String username = extractUsername(refreshToken);
+            refreshTokenService.deleteByUsername(username);
+
+        }
+
+        ResponseCookie deleteAccessToken =
+                ResponseCookie.from("accessToken", "")
+                        .maxAge(0)
+                        .path("/")
+                        .build();
+
+        ResponseCookie deleteRefreshToken =
+                ResponseCookie.from("refreshToken", "")
+                        .maxAge(0)
+                        .path("/auth/refresh")
+                        .build();
+
+        response.addHeader("Set-Cookie", deleteAccessToken.toString());
+        response.addHeader("Set-Cookie", deleteRefreshToken.toString());
+
         return ResponseEntity.ok("로그아웃 완료");
     }
 
@@ -102,5 +125,9 @@ public class AuthApiController {
                         Map.of(
                                 "username", user.getUsername(),
                                 "nickname", user.getNickname())));
+    }
+
+    private String extractUsername(String token){
+        return jwtTokenProvider.getUsernameFromToken(token, true);
     }
 }

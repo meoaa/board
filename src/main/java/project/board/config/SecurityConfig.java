@@ -39,6 +39,9 @@ public class SecurityConfig {
         http = applyCommonConfig(http)
                 .securityMatcher("/api/auth/**", "/swagger/**", "/health")
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/auth/login", "/api/auth/signup", "/api/auth/logout").permitAll()
+                        // /me 같은 정보 조회는 인증 필요
+                        .requestMatchers("/api/auth/me").authenticated()
                         .anyRequest().permitAll())
                 .exceptionHandling(e ->
                         e.authenticationEntryPoint(authenticationEntryPoint))
