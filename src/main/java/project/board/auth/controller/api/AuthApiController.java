@@ -72,7 +72,7 @@ public class AuthApiController {
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
                 .secure(true)
-                .path("/auth/refresh")
+                .path("/api/auth/refresh")
                 .maxAge(604800)
                 .sameSite("Strict")
                 .build();
@@ -84,13 +84,16 @@ public class AuthApiController {
         return ResponseEntity.ok(ApiResponse.of(200, "로그인 성공", null));
     }
 
-    @PostMapping("/logout")
+    @PostMapping("/refresh/logout")
     public ResponseEntity<?> logout(
             @CookieValue(name = "refreshToken", required = false) String refreshToken,
             HttpServletResponse response) {
 
+        log.info("refresh Token : {}", refreshToken);
+
         if (refreshToken != null) {
             String username = extractUsername(refreshToken);
+            log.info("refresh token username : {}" , username);
             refreshTokenService.deleteByUsername(username);
 
         }
@@ -104,7 +107,7 @@ public class AuthApiController {
         ResponseCookie deleteRefreshToken =
                 ResponseCookie.from("refreshToken", "")
                         .maxAge(0)
-                        .path("/auth/refresh")
+                        .path("/api/auth/refresh")
                         .build();
 
         response.addHeader("Set-Cookie", deleteAccessToken.toString());

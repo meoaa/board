@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 if(logoutBtn){
     logoutBtn.addEventListener("click", async () =>{
-        await fetch("/api/auth/logout",{
+        await fetch("/api/auth/refresh/logout",{
             method: "POST",
             credentials: "include"
         });
