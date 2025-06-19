@@ -2,32 +2,39 @@
 import { fetchData } from "../common/fetch-util.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
-    const jwtToken = localStorage.getItem("jwtToken");
-
     const loginBox = document.querySelector("#login_box");
     const userDashboard = document.querySelector("#user_dashboard");
+    const usernameSpan = document.querySelector("#username");
+    const logoutBtn = document.querySelector("#logout");
 
-    if (jwtToken) {
-        loginBox.style.display = "none";
-
-        try {
-            const payload = await fetchData("/api/members/me", "GET", null, {
-                Authorization: `Bearer ${jwtToken}`
+if(logoutBtn){
+    logoutBtn.addEventListener("click", async () =>{
+        await fetch("/api/auth/logout",{
+            method: "POST",
+            credentials: "include"
+        });
+        window.location.reload(); // UI 갱신
+    })
+}
+     try {
+            const response = await fetch("/api/auth/me", {
+                method: "GET",
+                credentials: "include" // ✅ 쿠키 자동 전송
             });
 
-            document.querySelector("#username").innerText = `${payload.data.nickname}님 환영합니다.`;
+            if (!response.ok) throw new Error("인증 실패");
 
-            document.querySelector("#logout").addEventListener("click", () => {
-                localStorage.removeItem("jwtToken");
-                window.location.href = "/";
-            });
-        } catch {
-            localStorage.removeItem("jwtToken"); // 만료 등 오류 시 제거
+            const result = await response.json();
+
+            // ✅ 로그인 상태 처리
+            loginBox.style.display = "none";
+            userDashboard.style.display = "block";
+            usernameSpan.textContent = result.data.nickname + "님 환영합니다.";
+        } catch (err) {
+            // ❌ 로그인 안 됨 → 비로그인 UI 노출
             loginBox.style.display = "block";
             userDashboard.style.display = "none";
+            console.warn("로그인 안 됨:", err.message);
         }
-    } else {
-        loginBox.style.display = "block";
-        userDashboard.style.display = "none";
-    }
+
 });

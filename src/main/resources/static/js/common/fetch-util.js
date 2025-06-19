@@ -1,7 +1,6 @@
 // static/js/common/fetch-util.js
 
 export async function fetchData(url, method = 'GET', data = null, headers = {}) {
-    const jwtToken = localStorage.getItem("jwtToken");
     const options = {
         method,
         headers: {
@@ -10,14 +9,12 @@ export async function fetchData(url, method = 'GET', data = null, headers = {}) 
         }
     };
 
-    if (jwtToken) {
-        options.headers['Authorization'] = `Bearer ${jwtToken}`;
-    }
     if (["POST", "PUT", "PATCH"].includes(method)) {
         options.body = JSON.stringify(data);
     }
 
     const response = await fetch(url, options);
+
     const result = await response.json();
 
     if (!response.ok) throw result;

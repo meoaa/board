@@ -8,10 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+import project.board.auth.CustomUserDetails;
 import project.board.auth.dto.AuthResponseDto;
 import project.board.auth.dto.LoginRequestDto;
 import project.board.auth.token.JwtTokenProvider;
@@ -21,6 +20,7 @@ import project.board.auth.dto.SignUpResponseDto;
 import project.board.member.service.MemberService;
 
 import java.time.Duration;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -42,7 +42,7 @@ public class AuthApiController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(
+    public ResponseEntity<ApiResponse<?>> login(
             @RequestBody LoginRequestDto dto,
             HttpServletResponse response){
         log.info("login 컨트롤러 도달");
@@ -55,6 +55,8 @@ public class AuthApiController {
 
         String accessToken = jwtTokenProvider.generateAccessToken(authenticate);
         String refreshToken = jwtTokenProvider.generateRefreshToken(authenticate);
+
+        log.info("name : {}" , authenticate.getName());
 
         ResponseCookie accessCookie = ResponseCookie.from("accessToken", accessToken)
                 .httpOnly(true)
@@ -76,6 +78,29 @@ public class AuthApiController {
         response.addHeader("Set-Cookie", accessCookie.toString());
         response.addHeader("Set-Cookie", refreshCookie.toString());
 
-        return ResponseEntity.ok("로그인 성공");
+        return ResponseEntity.ok(ApiResponse.of(200, "로그인 성공", null));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        ResponseCookie deleteAccess = ResponseCookie.from("accessToken", "").maxAge(0).path("/").build();
+        ResponseCookie deleteRefresh = ResponseCookie.from("refreshToken", "").maxAge(0).path("/auth/refresh").build();
+        response.addHeader("Set-Cookie", deleteAccess.toString());
+        response.addHeader("Set-Cookie", deleteRefresh.toString());
+        return ResponseEntity.ok("로그아웃 완료");
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<ApiResponse<?>> getCurrentUser(
+            @AuthenticationPrincipal CustomUserDetails user){
+        if(user == null) return ResponseEntity.status(401).build();
+
+        return ResponseEntity.ok(
+                ApiResponse.of(
+                        200,
+                        "로그인 인증 성공",
+                        Map.of(
+                                "username", user.getUsername(),
+                                "nickname", user.getNickname())));
     }
 }

@@ -11,7 +11,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             const payload = await fetchData("/api/auth/login", "POST", { username, password });
-            localStorage.setItem("jwtToken", payload.data.token);
+
+            console.log(payload);
+
             window.location.href = "/";
         } catch (err) {
             const errorBox = document.querySelector(".error_box");
