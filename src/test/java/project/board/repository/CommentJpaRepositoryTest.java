@@ -12,7 +12,7 @@ import project.board.comment.domain.Comment;
 import project.board.member.domain.Member;
 import project.board.member.repository.MemberJpaRepository;
 import project.board.post.domain.Post;
-import project.board.post.repository.PostJpaRepository;
+import project.board.post.repository.PostRepository;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ class CommentJpaRepositoryTest {
     private MemberJpaRepository memberJpaRepository;
 
     @Autowired
-    private PostJpaRepository postJpaRepository;
+    private PostRepository postJpaRepository;
 
     @Autowired
     private EntityManager em;
