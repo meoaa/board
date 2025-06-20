@@ -9,6 +9,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 import project.board.auth.CustomUserDetails;
 
@@ -18,6 +20,7 @@ import project.board.auth.token.JwtTokenProvider;
 import project.board.common.ApiResponse;
 import project.board.auth.dto.SignUpRequestDto;
 import project.board.auth.dto.SignUpResponseDto;
+import project.board.common.ErrorResponse;
 import project.board.member.service.MemberService;
 
 
@@ -34,6 +37,7 @@ public class AuthApiController {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenService refreshTokenService;
+    private final UserDetailsService userDetailsService;
 
     @PostMapping("/createMember")
     public ResponseEntity<ApiResponse<SignUpResponseDto>> createMember(
@@ -72,7 +76,7 @@ public class AuthApiController {
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
                 .secure(true)
-                .path("/api/auth/refresh")
+                .path("/api/auth")
                 .maxAge(604800)
                 .sameSite("Strict")
                 .build();
@@ -84,7 +88,7 @@ public class AuthApiController {
         return ResponseEntity.ok(ApiResponse.of(200, "로그인 성공", null));
     }
 
-    @PostMapping("/refresh/logout")
+    @PostMapping("/logout")
     public ResponseEntity<?> logout(
             @CookieValue(name = "refreshToken", required = false) String refreshToken,
             HttpServletResponse response) {
@@ -107,7 +111,7 @@ public class AuthApiController {
         ResponseCookie deleteRefreshToken =
                 ResponseCookie.from("refreshToken", "")
                         .maxAge(0)
-                        .path("/api/auth/refresh")
+                        .path("/api/auth")
                         .build();
 
         response.addHeader("Set-Cookie", deleteAccessToken.toString());
@@ -132,5 +136,48 @@ public class AuthApiController {
 
     private String extractUsername(String token){
         return jwtTokenProvider.getUsernameFromToken(token, true);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshAccessToken(
+            @CookieValue(name = "refreshToken", required = false) String refreshToken,
+            HttpServletResponse response){
+
+        if(refreshToken == null) {
+            return ResponseEntity.status(401).body(ErrorResponse.of(401,"Refresh Token 없음"));
+        }
+        try{
+            //1 유효성 검사(토큰 자체 검사 + DB에 저장된 값과 일치 여부 확인)
+            String username = jwtTokenProvider.getUsernameFromToken(refreshToken, true);
+            boolean valid = jwtTokenProvider.validateToken(refreshToken, true);
+
+            if(!valid || !refreshTokenService.exists(username ,refreshToken)){
+                return ResponseEntity.status(401).body(ErrorResponse.of(401, "Refresh Token 무효"));
+            }
+
+            //2 유저 정보 조회
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+            //3 새로운 Access Token 발급
+            String newAccessToken = jwtTokenProvider.generateAccessToken(authentication);
+
+            ResponseCookie accessCookie = ResponseCookie.from("accessToken", newAccessToken)
+                    .httpOnly(true)
+                    .secure(true)
+                    .sameSite("Strict")
+                    .path("/")
+                    .maxAge(1800)
+                    .build();
+
+            response.addHeader("Set-Cookie", accessCookie.toString());
+
+            return ResponseEntity.ok(ApiResponse.of(200, "accessToken 재발급 성공", null));
+
+
+        } catch (Exception ex) {
+            return ResponseEntity.status(401).body(ErrorResponse.of(401 ,"Refresh Token 처리 중 오류"));
+        }
     }
 }

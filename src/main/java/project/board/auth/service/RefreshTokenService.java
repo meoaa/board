@@ -32,4 +32,11 @@ public class RefreshTokenService {
     public void deleteByUsername(String username) {
         refreshTokenRepository.deleteById(username);
     }
+
+
+    public boolean exists(String username, String token){
+        return refreshTokenRepository.findByUsername(username)
+                .map(saved -> saved.getRefreshToken().equals(token))
+                .orElse(false);
+    }
 }
