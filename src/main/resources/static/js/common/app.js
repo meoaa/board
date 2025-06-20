@@ -1,6 +1,6 @@
 const API_BASE = '/api';
 
-async function fetchWithAuth(url, options = {}) {
+export async function fetchWithAuth(url, options = {}) {
   let res = await fetch(url, {
     ...options,
     credentials: 'include', // ✅ 쿠키 포함 필수
@@ -30,34 +30,34 @@ async function fetchWithAuth(url, options = {}) {
   return res;
 }
 
-async function getCurrentUser() {
-  const res = await fetchWithAuth(`${API_BASE}/auth/me`);
-  if (!res || res.status !== 200) {
-    console.warn('로그인된 사용자 아님');
-    return null;
-  }
-  return res.json();
-}
-
-async function getPosts() {
-  const res = await fetchWithAuth(`${API_BASE}/posts`);
-  if (res.ok) {
-    const posts = await res.json();
-    renderPostList(posts);
-  } else {
-    console.error('게시글 가져오기 실패');
-  }
-}
-
-function renderPostList(posts) {
-  const ul = document.getElementById('postList');
-  ul.innerHTML = '';
-  posts.forEach(post => {
-    const li = document.createElement('li');
-    li.textContent = post.title;
-    ul.appendChild(li);
-  });
-}
+//async function getCurrentUser() {
+//  const res = await fetchWithAuth(`${API_BASE}/auth/me`);
+//  if (!res || res.status !== 200) {
+//    console.warn('로그인된 사용자 아님');
+//    return null;
+//  }
+//  return res.json();
+//}
+//
+//async function getPosts() {
+//  const res = await fetchWithAuth(`${API_BASE}/posts`);
+//  if (res.ok) {
+//    const posts = await res.json();
+//    renderPostList(posts);
+//  } else {
+//    console.error('게시글 가져오기 실패');
+//  }
+//}
+//
+//function renderPostList(posts) {
+//  const ul = document.getElementById('postList');
+//  ul.innerHTML = '';
+//  posts.forEach(post => {
+//    const li = document.createElement('li');
+//    li.textContent = post.title;
+//    ul.appendChild(li);
+//  });
+//}
 
 (async () => {
   const user = await getCurrentUser();

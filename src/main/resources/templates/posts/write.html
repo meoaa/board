@@ -6,11 +6,33 @@
 <body>
 <div th:replace="fragments/header :: header"></div>
 <h1>게시판</h1>
-<table>
-    <span><input></span>
-</table>
+<div>
+    <span>제목<input name="title" type="text"></span>
+    <p>내용<textarea name="content"></textarea></p>
+    <button id="post_create_btn">작성</button>
+</div>
 
 <script type="module" th:src="@{/js/layout/header.js}"></script>
 <script type="module" th:src="@{/js/auth/login.js}"></script>
+<script type="module" th:src="@{/js/common/app.js}"></script>
+<script type="module">
+    import { fetchWithAuth } from '/js/common/app.js';
+
+    const postBtn = document.querySelector("#post_create_btn");
+
+    postBtn.addEventListener("click",async () => {
+        const title = document.querySelector("input[name='title']").value;
+        const content = document.querySelector("textarea").value;
+
+        const result = await fetchWithAuth(`/api/posts/create`,{
+            method: "POST",
+            body : JSON.stringify({title, content}),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        console.log(await result.json());
+    });
+</script>
 </body>
 </html>
