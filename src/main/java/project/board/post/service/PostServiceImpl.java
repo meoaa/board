@@ -2,6 +2,8 @@ package project.board.post.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.board.common.exception.PostAccessDeniedException;
@@ -88,5 +90,11 @@ public class PostServiceImpl implements PostService{
             throw new PostAccessDeniedException();
         }
         postRepository.delete(post);
+    }
+
+    @Override
+    public Page<PostListResponseDto> searchPosts(String keyword, Pageable pageable) {
+        Page<Post> posts = postRepository.searchWithPaging(keyword, pageable);
+        return posts.map(PostListResponseDto::from);
     }
 }

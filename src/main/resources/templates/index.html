@@ -4,7 +4,7 @@
     <title>Hello Page</title>
 </head>
 <body>
-<div th:replace="fragments/header :: header"></div>
+<div th:replace="~{fragments/header :: header}"></div>
 <h1>게시판</h1>
 <div>
 <table>
@@ -26,6 +26,23 @@
         <td th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}">2025-06-16</td></tr>
     </tbody>
 </table>
+    <div>
+        <ul class="pagination">
+            <li th:if="${page.hasPrevious()}">
+                <a th:href="@{/posts(page=${page.number - 1}, keyword=${keyword})}">이전</a>
+            </li>
+
+            <li th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+                th:classappend="${i == page.number} ? 'active'">
+                <a th:href="@{/posts(page=${i}, keyword=${keyword})}"
+                   th:text="${i + 1}">1</a>
+            </li>
+
+            <li th:if="${page.hasNext()}">
+                <a th:href="@{/posts(page=${page.number + 1}, keyword=${keyword})}">다음</a>
+            </li>
+        </ul>
+    </div>
     <a href="/posts/create">게시글 작성</a>
 </div>
 <script type="module" th:src="@{/js/layout/header.js}"></script>

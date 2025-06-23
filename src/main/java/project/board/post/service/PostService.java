@@ -1,5 +1,7 @@
 package project.board.post.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import project.board.post.dto.PostCreateRequestDto;
 import project.board.post.dto.PostListResponseDto;
 import project.board.post.dto.PostResponseDto;
@@ -14,4 +16,5 @@ public interface PostService {
     long updatePost(Long postId, Long memberId, PostUpdateRequestDto dto);
     void deletePost(Long postId, Long memberId);
 
+    Page<PostListResponseDto> searchPosts(String keyword, Pageable pageable);
 }
