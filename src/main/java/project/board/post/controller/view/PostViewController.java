@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import project.board.post.service.PostServiceImpl;
+import project.board.post.service.PostService;
 
 
 
@@ -17,7 +17,7 @@ import project.board.post.service.PostServiceImpl;
 @Slf4j
 public class PostViewController {
 
-    private final PostServiceImpl postService;
+    private final PostService postService;
 
 
     @GetMapping("/create")

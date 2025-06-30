@@ -13,21 +13,16 @@ import project.board.member.domain.Member;
 import project.board.member.repository.MemberJpaRepository;
 import project.board.post.domain.Post;
 import project.board.post.dto.PostCreateRequestDto;
-import project.board.post.dto.PostListResponseDto;
 import project.board.post.dto.PostResponseDto;
 import project.board.post.dto.PostUpdateRequestDto;
 
 import project.board.post.repository.PostRepository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
 @Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class PostServiceImpl{
+public class PostService {
 
     private final PostRepository postRepository;
     private final MemberJpaRepository memberRepository;
@@ -56,9 +51,6 @@ public class PostServiceImpl{
         return PostResponseDto.from(post);
     }
 
-
-
-
     @Transactional
     public long updatePost(
             Long postId,
@@ -82,6 +74,10 @@ public class PostServiceImpl{
             throw new PostAccessDeniedException();
         }
         postRepository.delete(post);
+    }
+
+    public Page<Post> getPostList(Pageable pageable){
+        return postRepository.findAll(pageable);
     }
 
 }

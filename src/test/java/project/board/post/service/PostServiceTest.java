@@ -20,18 +20,16 @@ import project.board.post.dto.PostUpdateRequestDto;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @Transactional
 @ActiveProfiles("test")
 @SpringBootTest
-class PostServiceImplTest {
+class PostServiceTest {
 
     @Autowired
     private MemberService memberService;
 
     @Autowired
-    private PostServiceImpl postService;
+    private PostService postService;
 
     @Autowired
     private EntityManager em;
