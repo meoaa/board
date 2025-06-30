@@ -4,13 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import project.board.post.dto.PostListResponseDto;
-import project.board.post.service.PostService;
+import project.board.post.service.PostServiceImpl;
 
-import java.util.List;
+
 
 @Controller
 @RequiredArgsConstructor
@@ -18,16 +17,8 @@ import java.util.List;
 @Slf4j
 public class PostViewController {
 
-    private final PostService postService;
+    private final PostServiceImpl postService;
 
-    @GetMapping
-    public String showAllPostList(Model model){
-        List<PostListResponseDto> posts =
-                postService.findAllPost();
-        model.addAttribute("posts", posts);
-
-        return "/posts/list";
-    }
 
     @GetMapping("/create")
     public String createPostPage(){

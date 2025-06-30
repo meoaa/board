@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import project.board.auth.CustomUserDetails;
 import project.board.common.ApiResponse;
 import project.board.post.dto.PostCreateRequestDto;
-import project.board.post.service.PostService;
+import project.board.post.service.PostServiceImpl;
 
 import java.util.Map;
 
@@ -23,7 +23,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class PostApiController {
 
-    private final PostService postService;
+    private final PostServiceImpl postService;
 
     @PostMapping("/create")
     public ResponseEntity<?> createPost(

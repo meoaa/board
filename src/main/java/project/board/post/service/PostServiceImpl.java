@@ -27,12 +27,11 @@ import java.util.stream.Collectors;
 @Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class PostServiceImpl implements PostService{
+public class PostServiceImpl{
 
     private final PostRepository postRepository;
     private final MemberJpaRepository memberRepository;
 
-    @Override
     @Transactional
     public long createPost(PostCreateRequestDto dto, Long memberId) {
         Member member = memberRepository.findById(memberId)
@@ -49,7 +48,7 @@ public class PostServiceImpl implements PostService{
         return savedPost.getId();
     }
 
-    @Override
+
     public PostResponseDto findPostById(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(PostNotFoundException::new);
@@ -57,15 +56,9 @@ public class PostServiceImpl implements PostService{
         return PostResponseDto.from(post);
     }
 
-    @Override
-    public List<PostListResponseDto> findAllPost() {
-        return postRepository.findAllPosts()
-                .stream()
-                .map(PostListResponseDto::from)
-                .collect(Collectors.toCollection(ArrayList::new));
-    }
 
-    @Override
+
+
     @Transactional
     public long updatePost(
             Long postId,
@@ -82,7 +75,6 @@ public class PostServiceImpl implements PostService{
         return post.getId();
     }
 
-    @Override
     @Transactional
     public void deletePost(Long postId, Long memberId) {
         Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
@@ -92,9 +84,4 @@ public class PostServiceImpl implements PostService{
         postRepository.delete(post);
     }
 
-    @Override
-    public Page<PostListResponseDto> searchPosts(String keyword, Pageable pageable) {
-        Page<Post> posts = postRepository.searchWithPaging(keyword, pageable);
-        return posts.map(PostListResponseDto::from);
-    }
 }

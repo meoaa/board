@@ -31,7 +31,7 @@ class PostServiceImplTest {
     private MemberService memberService;
 
     @Autowired
-    private PostService postService;
+    private PostServiceImpl postService;
 
     @Autowired
     private EntityManager em;
