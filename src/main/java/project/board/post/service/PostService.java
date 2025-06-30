@@ -13,6 +13,7 @@ import project.board.member.domain.Member;
 import project.board.member.repository.MemberJpaRepository;
 import project.board.post.domain.Post;
 import project.board.post.dto.PostCreateRequestDto;
+import project.board.post.dto.PostListResponseDto;
 import project.board.post.dto.PostResponseDto;
 import project.board.post.dto.PostUpdateRequestDto;
 
@@ -76,8 +77,12 @@ public class PostService {
         postRepository.delete(post);
     }
 
-    public Page<Post> getPostList(Pageable pageable){
-        return postRepository.findAll(pageable);
+//    public Page<Post> getPostList(Pageable pageable){
+//        return postRepository.findAll(pageable);
+//    }
+
+    public Page<PostListResponseDto> getPostList(Pageable pageable){
+        return postRepository.findAllWithMember(pageable);
     }
 
 }

@@ -8,11 +8,14 @@ import project.board.post.domain.Post;
 
 import java.util.List;
 
-public interface PostRepository extends JpaRepository<Post, Long> {
+//PostRepositoryCustom 상속(QueryDSL)
+public interface PostRepository extends JpaRepository<Post, Long>, PostRepositoryCustom {
 
     List<Post> findByTitleContaining(String keyword);
     List<Post> findByMember_UsernameContaining(String keyword);
 
-    @EntityGraph(attributePaths = {"member"})
-    Page<Post> findAll(Pageable pageable);
+
+//    @EntityGraph(attributePaths = {"member"})
+//    Page<Post> findAll(Pageable pageable);
+//    N + 1 문제 해결
 }

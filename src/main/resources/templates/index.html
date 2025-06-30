@@ -11,7 +11,7 @@
         <tr th:each="post : ${postPage.content}">
             <td th:text="${post.id}"></td>
             <td th:text="${post.title}"></td>
-            <td th:text="${post.member.nickname}"></td>
+            <td th:text="${post.writer}"></td>
             <td th:text="${post.createdAt}"></td>
         </tr>
     </table>

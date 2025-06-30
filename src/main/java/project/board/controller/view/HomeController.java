@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import project.board.post.domain.Post;
+import project.board.post.dto.PostListResponseDto;
 import project.board.post.service.PostService;
 
 
@@ -25,9 +26,15 @@ public class HomeController {
                        @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC)
                        Pageable pageable
                        ){
-        Page<Post> postPage = postService.getPostList(pageable);
+
+        Page<PostListResponseDto> postPage = postService.getPostList(pageable);
 
         model.addAttribute("postPage", postPage);
+
+        log.info("size = {}", postPage.getSize());
+        log.info("totalPages = {}", postPage.getTotalPages());
+        log.info("total elements = {}", postPage.getTotalElements());
+        log.info("number of elements ={}", postPage.getNumberOfElements());
 
         return "index";
     }

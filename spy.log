@@ -1,0 +1,5 @@
+1751254827000|0|statement|connection 29|url jdbc:h2:mem:board|     drop table if exists comment cascade |     drop table if exists comment cascade 
+1751254827002|0|statement|connection 29|url jdbc:h2:mem:board|     drop table if exists member cascade |     drop table if exists member cascade 
+1751254827002|0|statement|connection 29|url jdbc:h2:mem:board|     drop table if exists post cascade |     drop table if exists post cascade 
+1751254827002|0|statement|connection 29|url jdbc:h2:mem:board|     drop table if exists post_like cascade |     drop table if exists post_like cascade 
+1751254827003|0|statement|connection 29|url jdbc:h2:mem:board|     drop table if exists refresh_token cascade |     drop table if exists refresh_token cascade 
