@@ -9,6 +9,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import project.board.post.domain.Post;
 import project.board.post.dto.PostListResponseDto;
 import project.board.post.service.PostService;
@@ -22,15 +23,17 @@ public class HomeController {
     private final PostService postService;
 
     @GetMapping("/")
-    public String home(Model model,
+    public String home(@RequestParam(name = "q", required = false) String query,
                        @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC)
-                       Pageable pageable
+                       Pageable pageable,
+                       Model model
                        ){
 
-        Page<PostListResponseDto> postPage = postService.getPostList(pageable);
+        Page<PostListResponseDto> postPage = postService.getPostList(pageable, query);
 
         model.addAttribute("postPage", postPage);
 
+        log.info("query = {}", query);
         log.info("size = {}", postPage.getSize());
         log.info("totalPages = {}", postPage.getTotalPages());
         log.info("total elements = {}", postPage.getTotalElements());

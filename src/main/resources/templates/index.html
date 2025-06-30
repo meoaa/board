@@ -17,22 +17,35 @@
     </table>
     <div class="pagination">
     <span th:if="${postPage.hasPrevious()}">
-        <a th:href="@{/(page=${postPage.number - 1})}">이전</a>
+        <a th:href="@{/(page=${postPage.number - 1}, q=${param.q})}">이전</a>
     </span>
 
         <span th:each="pageNum : ${#numbers.sequence(0, postPage.totalPages - 1)}">
-        <a th:href="@{/(page=${pageNum})}"
+        <a th:href="@{/(page=${pageNum}, q=${param.q})}"
            th:text="${pageNum + 1}"
            th:class="${pageNum == postPage.number} ? 'active' : null"></a>
     </span>
 
         <span th:if="${postPage.hasNext()}">
-        <a th:href="@{/(page=${postPage.number + 1})}">다음</a>
+        <a th:href="@{/(page=${postPage.number + 1}, q=${param.q})}">다음</a>
     </span>
     </div>
     <a href="/posts/create">게시글 작성</a>
+    <p><input id="search_text" type="text" placeholder="검색어를 입력하세요."><button id="search_btn">검색</button></p>
 </div>
 <script type="module" th:src="@{/js/layout/header.js}"></script>
 <script type="module" th:src="@{/js/auth/login.js}"></script>
+<script>
+    const searchBtn = document.querySelector("#search_btn");
+    const searchInput = document.querySelector("#search_text");
+    searchBtn.addEventListener("click",()=>{
+        if(!searchInput.value){
+            alert("검색어를 입력해주세요");
+            return;
+        }else{
+            window.location.href = `/?q=${searchInput.value}`;
+        }
+    })
+</script>
 </body>
 </html>

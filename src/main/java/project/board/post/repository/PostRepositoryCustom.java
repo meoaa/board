@@ -7,5 +7,5 @@ import project.board.post.dto.PostListResponseDto;
 
 public interface PostRepositoryCustom {
    // Page<Post> findAllWithMember(Pageable pageable);
-    Page<PostListResponseDto> findAllWithMember(Pageable pageable);
+    Page<PostListResponseDto> findAllWithMember(Pageable pageable, String query);
 }

@@ -81,8 +81,8 @@ public class PostService {
 //        return postRepository.findAll(pageable);
 //    }
 
-    public Page<PostListResponseDto> getPostList(Pageable pageable){
-        return postRepository.findAllWithMember(pageable);
+    public Page<PostListResponseDto> getPostList(Pageable pageable,String query){
+        return postRepository.findAllWithMember(pageable, query);
     }
 
 }
