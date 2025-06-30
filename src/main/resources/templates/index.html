@@ -15,6 +15,21 @@
             <td th:text="${post.createdAt}"></td>
         </tr>
     </table>
+    <div class="pagination">
+    <span th:if="${postPage.hasPrevious()}">
+        <a th:href="@{/(page=${postPage.number - 1})}">이전</a>
+    </span>
+
+        <span th:each="pageNum : ${#numbers.sequence(0, postPage.totalPages - 1)}">
+        <a th:href="@{/(page=${pageNum})}"
+           th:text="${pageNum + 1}"
+           th:class="${pageNum == postPage.number} ? 'active' : null"></a>
+    </span>
+
+        <span th:if="${postPage.hasNext()}">
+        <a th:href="@{/(page=${postPage.number + 1})}">다음</a>
+    </span>
+    </div>
     <a href="/posts/create">게시글 작성</a>
 </div>
 <script type="module" th:src="@{/js/layout/header.js}"></script>
